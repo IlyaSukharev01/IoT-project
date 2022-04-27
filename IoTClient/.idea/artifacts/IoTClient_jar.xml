@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="IoTClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/IoTClient_jar</output-path>
+    <root id="archive" name="IoTClient.jar">
+      <element id="module-output" name="IoTClient" />
+    </root>
+  </artifact>
+</component>
