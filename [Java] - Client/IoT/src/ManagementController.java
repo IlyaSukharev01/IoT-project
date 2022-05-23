@@ -4,10 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,65 +26,77 @@ public class ManagementController implements Initializable{
 
     private Model model;
 
+    private PngPathKeeper pngPathKeeper;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         model = modelData.getModel();
+        pngPathKeeper = new PngPathKeeper();
     }
 
     @FXML
     public void motorUpClicked() throws Exception{
         String state = model.writeMessage('u');
         if (state.equals("MOTORUPOFF")){
-            motorUp.setImage(new Image("resources/motorUF.png"));
+            motorUp.setImage(pngPathKeeper.getMotorUpPath(false));
             motorDown.setDisable(false);
         }
         else if (state.equals("MOTORUPON")){
-            motorUp.setImage(new Image("resources/motorUT.png"));
+            motorUp.setImage(pngPathKeeper.getMotorUpPath(true));
             motorDown.setDisable(true);
         }
         else if (state.equals("NOCONNECTION")){
             reconnect();
         }
+        new FileLogger().writeLogs("Got and wrote state of IoT Element [Motor Up]");
     }
     @FXML
     public void motorDownClicked() throws Exception{
         String state = model.writeMessage('d');
         if (state.equals("MOTORDOWNOFF")){
-            motorDown.setImage(new Image("resources/motorDF.png"));
+            motorDown.setImage(pngPathKeeper.getMotorDownPath(false));
             motorUp.setDisable(false);
         }
         else if (state.equals("MOTORDOWNON")){
-            motorDown.setImage(new Image("resources/motorDT.png"));
+            motorDown.setImage(pngPathKeeper.getMotorDownPath(true));
             motorUp.setDisable(true);
         }
         else if (state.equals("NOCONNECTION")){
             reconnect();
         }
+        new FileLogger().writeLogs("Got and wrote state of IoT Element [Motor Down]");
     }
     @FXML
     public void ledClicked() throws Exception{
         String state = model.writeMessage('l');
         if (state.equals("LEDOFF")){
-            led.setImage(new Image("resources/ledF.png"));
+            led.setImage(pngPathKeeper.getLedPath(false));
         }
         else if (state.equals("LEDON")){
-            led.setImage(new Image("resources/ledT.png"));
+            led.setImage(pngPathKeeper.getLedPath(true));
         }
         else if (state.equals("NOCONNECTION")){
             reconnect();
         }
+        new FileLogger().writeLogs("Got and wrote state of IoT Element [LED]");
     }
     @FXML
     public void autoModeClicked() throws Exception{
         String state = model.writeMessage('a');
         if (state.equals("AUTOMODEON")){
-            autoMode.setImage(new Image("resources/ledT.png"));
+            autoMode.setImage(pngPathKeeper.getAutoPath(true));
+
             motorUp.setDisable(true);
+            motorUp.setImage(pngPathKeeper.getMotorUpPath(false));
+
             motorDown.setDisable(true);
+            motorDown.setImage(pngPathKeeper.getMotorDownPath(false));
+
             led.setDisable(true);
+            led.setImage(pngPathKeeper.getLedPath(false));
         }
         else if (state.equals("AUTOMODEOFF")){
-            autoMode.setImage(new Image("resources/sample.png"));
+            autoMode.setImage(pngPathKeeper.getAutoPath(false));
             motorUp.setDisable(false);
             motorDown.setDisable(false);
             led.setDisable(false);
@@ -90,11 +104,23 @@ public class ManagementController implements Initializable{
         else if (state.equals("NOCONNECTION")){
             reconnect();
         }
+        new FileLogger().writeLogs("Got and wrote state of IoT Element [Auto Mode]");
     }
 
     @FXML
-    public void getMessage(){
-        System.out.println("Hello world!");
+    public void clearCacheData(){
+            try{
+                String filePath = new FileLogger().getName();
+                if (filePath != null){
+                    File file = new File(filePath);
+                    file.setWritable(true);
+                    new BufferedWriter(new FileWriter(file)).write("");
+                    file.setReadOnly();
+                }
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                new FileLogger().writeLogs("'Cache Data' file successfully cleared");
+            }
     }
 
     @FXML
@@ -137,14 +163,12 @@ public class ManagementController implements Initializable{
         helpLabel.setOpacity(1.0);
         helpLabel.setDisable(false);
         closeHelpLblBtn.setOpacity(1.0);
-        //closeHelpLblBtn.setDisable(false);
     }
     @FXML
     public void closeHelpLabel(){
         helpLabel.setOpacity(0.0);
         helpLabel.setDisable(true);
         closeHelpLblBtn.setOpacity(0.0);
-        //closeHelpLblBtn.setDisable(true);
     }
 
 }

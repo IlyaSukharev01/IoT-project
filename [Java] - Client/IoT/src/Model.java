@@ -88,7 +88,6 @@ public class Model{
                 arrivedStr += sym;
             }
         }
-        new FileLogger().writeLogs("Got and wrote state of IoT Element");
         return arrivedStr;
     }
 

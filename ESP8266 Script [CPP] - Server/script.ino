@@ -55,7 +55,7 @@ void setup() {
   //Start data
   
   //Connect to WLAN
-  WiFi.begin("lolita", "cardigan92");
+  WiFi.begin("NameOfNetwork", "Pass");
 
   //Enable terminal
   Serial.begin(9600);
@@ -66,8 +66,8 @@ void setup() {
   Serial.println(WiFi.localIP());
   
   server.begin();
-  internalData.attach(10.0, getInternalData);
-  externalData.attach(11.0, getExternalData);
+  internalData.attach(300.0, getInternalData);
+  externalData.attach(301.0, getExternalData);
   enableMotor.attach(1.0, switchOnMotor);
   disabledMotor.attach(1.0, switchOffMotor);
   hollUpData.attach(1.0, getHollUpState);
@@ -141,6 +141,9 @@ void loop() {
           }
           else{
             autoMode = false;
+            if (digitalRead(motorEnable) == true){
+              digitalWrite(motorEnable, LOW);
+            }
             char buff[11] = {'A','U','T','O','M','O','D','E','O','F','F'};
             client.write(buff, sizeof(buff));
           }
@@ -189,15 +192,19 @@ void getExternalData(){
 }
 void getCommonSensorData(){
     if (middleInternalValue < 450 && middleExternalValue >= 650){
-      Serial.println(middleInternalValue);
-      Serial.println(middleExternalValue);
       reverseMotorSide = false;
       stateMotorActivity = true;
     }
     else if (middleInternalValue < 450 && middleExternalValue <= 450){
-      Serial.println(middleInternalValue);
-      Serial.println(middleExternalValue);
       reverseMotorSide = true;
+      stateMotorActivity = true;
+    }
+    else if (middleInternalValue >= 450 && middleExternalValue <= 450){
+      reverseMotorSide = false;
+      stateMotorActivity = true;
+    }
+    else if (middleInternalValue >= 450 && middleExternalValue >= 650){
+      reverseMotorSide = false;
       stateMotorActivity = true;
     }
     middleInternalValue = 0;

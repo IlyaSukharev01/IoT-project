@@ -1,0 +1,2 @@
+
+2022_05_23___16:47:14___Socket forcibly closed
