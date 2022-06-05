@@ -62,7 +62,7 @@ void setup() {
   pinMode(hollDown, INPUT);
   
   //Connect to WLAN
-  WiFi.begin("iPhone", "123321123");
+  WiFi.begin("lolita", "cardigan92");
 
   //Enable terminal
   Serial.begin(9600);
@@ -249,6 +249,13 @@ void loop() {
           if (!stateMotorUp){
               digitalWrite(motorEnable, HIGH);
               stateMotorUp = true;
+              if (digitalRead(motorEnable) == HIGH){
+                if (digitalRead(changeMotor) == HIGH){
+                  if (digitalRead(hollDown) == LOW){
+                    digitalWrite(motorEnable, LOW);
+                  }
+                }
+              }
               char buff[9] = {'M','O','T','O', 'R', 'U', 'P', 'O', 'N'};
               client.write(buff, sizeof(buff));
             }
@@ -265,6 +272,13 @@ void loop() {
           if (!stateMotorDown){
               digitalWrite(motorEnable, HIGH);
               stateMotorDown = true;
+              if (digitalRead(motorEnable) == HIGH){
+                if (digitalRead(changeMotor) == LOW){
+                  if (digitalRead(hollUp) == LOW){
+                    digitalWrite(motorEnable, LOW);
+                  }
+                }
+              }
               char buff[11] = {'M','O','T','O', 'R', 'D', 'O', 'W', 'N', 'O', 'N'};
               client.write(buff, sizeof(buff));
             }
@@ -299,7 +313,7 @@ void loop() {
           char buff[1] = {'0'};
           client.write(buff, sizeof(buff));
         }
+        }
       }
     }
-  }
 }
