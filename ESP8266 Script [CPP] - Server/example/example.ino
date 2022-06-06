@@ -62,7 +62,7 @@ void setup() {
   pinMode(hollDown, INPUT);
   
   //Connect to WLAN
-  WiFi.begin("lolita", "cardigan92");
+  WiFi.begin("iPhone", "123321123");
 
   //Enable terminal
   Serial.begin(9600);
